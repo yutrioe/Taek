@@ -3,8 +3,8 @@ import pyupbit
 import datetime
 import requests
 
-access = "your-access"
-secret = "your-secret"
+access = "lebK4wZxEkQBBd0mbZYdQVCLKmjLOLcbdkVgxS79"
+secret = "keywPP0DjWQaHuxChurlcyTcyN77Q1TxYENUWwGK9vK"
 myToken = "xoxb-3051121950740-3048854151139-W7ncjeN3r0PTnLrMeyN970Pv"
 
 def post_message(token, channel, text):
@@ -60,7 +60,7 @@ while True:
         end_time = start_time + datetime.timedelta(days=1)
 
         if start_time < now < end_time - datetime.timedelta(seconds=10):
-            target_price = get_target_price("KRW-BTC", 0.5)
+            target_price = get_target_price("KRW-BTC", 0.1)
             ma5 = get_ma5("KRW-BTC")
             current_price = get_current_price("KRW-BTC")
             if target_price < current_price and ma5 < current_price:
