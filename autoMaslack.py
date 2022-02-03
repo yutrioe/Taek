@@ -3,8 +3,8 @@ import pyupbit
 import datetime
 import requests
 
-access = "Ml3AeEDbl8OnRBrCp9yj2ybigDUg4vMaqjxz9e16"
-secret = "YIerDg2gQCQHnrxgxNVtULH9SxtNtc2rf0fOcRVe"
+access = "ESI3YOxB828SJTEf0xfRjNKJv3ZcMlJcfMKWqsCK"
+secret = "LibhzErxe4hjHJPkOrxFESQxu0mafKuJj4bZab8A"
 myToken = "xoxb-3051121950740-3048854151139-beSwXjjKFXq169mjbIecuzFT"
 coinlist = {'KRW-BTC', 'KRW-ETH', 'KRW-NEO', 'KRW-MTL', 'KRW-LTC', 'KRW-XRP',
  'KRW-ETC', 'KRW-OMG', 'KRW-SNT', 'KRW-WAVES', 'KRW-XEM', 'KRW-QTUM', 'KRW-LSK',
@@ -73,20 +73,20 @@ while True:
             end_time = start_time + datetime.timedelta(days=1)
 
             if  start_time < now < end_time - datetime.timedelta(seconds=10):
-                target_price = get_target_price(i, 0.6)
+                target_price = get_target_price(i, 0.7)
                 ma20 = get_ma20(i)
                 current_price = get_current_price(i)
                 if target_price < current_price and ma20 < current_price:
                     
                     krw = get_balance("KRW")
-                    if krw > 5000:
-                        buy_result = upbit.buy_market_order(i, krw*0.9995)
+                    if krw > 105000:
+                        buy_result = upbit.buy_market_order(i, 100000)
                         post_message(myToken,"#maslack", " 매수 : " +str(buy_result))
             else:
-                btc = get_balance("BTC")
-                if btc > 0.00008:
+                krw = get_balance("KRW")
+                if krw > 0.00008:
                     pass
-                        #sell_result = upbit.sell_market_order(i, btc*0.9995)
+                        #sell_result = upbit.sell_market_order(i, krw*0.9995)
                         #post_message(myToken,"#maslack", " buy : " +str(sell_result))
             time.sleep(1)
         except Exception as e:
