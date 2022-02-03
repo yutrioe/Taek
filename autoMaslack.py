@@ -3,9 +3,21 @@ import pyupbit
 import datetime
 import requests
 
-access = "lebK4wZxEkQBBd0mbZYdQVCLKmjLOLcbdkVgxS79"
-secret = "keywPP0DjWQaHuxChurlcyTcyN77Q1TxYENUWwGK9vK"
-myToken = "xoxb-3051121950740-3048854151139-W7ncjeN3r0PTnLrMeyN970Pv"
+access = "Ml3AeEDbl8OnRBrCp9yj2ybigDUg4vMaqjxz9e16"
+secret = "YIerDg2gQCQHnrxgxNVtULH9SxtNtc2rf0fOcRVe"
+myToken = "xoxb-3051121950740-3048854151139-beSwXjjKFXq169mjbIecuzFT"
+coinlist = {'KRW-BTC', 'KRW-ETH', 'KRW-NEO', 'KRW-MTL', 'KRW-LTC', 'KRW-XRP',
+ 'KRW-ETC', 'KRW-OMG', 'KRW-SNT', 'KRW-WAVES', 'KRW-XEM', 'KRW-QTUM', 'KRW-LSK',
+  'KRW-STEEM', 'KRW-XLM', 'KRW-ARDR', 'KRW-ARK', 'KRW-STORJ', 'KRW-GRS', 'KRW-REP',
+   'KRW-ADA', 'KRW-SBD', 'KRW-POWR', 'KRW-BTG', 'KRW-ICX', 'KRW-EOS', 'KRW-TRX', 'KRW-SC',
+    'KRW-ONT', 'KRW-ZIL', 'KRW-POLY', 'KRW-ZRX', 'KRW-LOOM', 'KRW-BCH', 'KRW-BAT', 'KRW-IOST', 'KRW-RFR', 'KRW-CVC', 'KRW-IQ', 
+    'KRW-IOTA', 'KRW-MFT', 'KRW-ONG', 'KRW-GAS', 'KRW-UPP', 'KRW-ELF', 'KRW-KNC', 'KRW-BSV', 'KRW-THETA', 'KRW-QKC', 'KRW-BTT',
+     'KRW-MOC', 'KRW-ENJ', 'KRW-TFUEL', 'KRW-MANA', 'KRW-ANKR', 'KRW-AERGO', 'KRW-ATOM', 'KRW-TT', 'KRW-CRE', 'KRW-MBL',
+      'KRW-WAXP', 'KRW-HBAR', 'KRW-MED', 'KRW-MLK', 'KRW-STPT', 'KRW-ORBS', 'KRW-VET', 'KRW-CHZ', 'KRW-STMX', 'KRW-DKA',
+       'KRW-HIVE', 'KRW-KAVA', 'KRW-AHT', 'KRW-LINK', 'KRW-XTZ', 'KRW-BORA', 'KRW-JST', 'KRW-CRO', 'KRW-TON', 'KRW-SXP',
+        'KRW-HUNT', 'KRW-PLA', 'KRW-DOT', 'KRW-SRM', 'KRW-MVL', 'KRW-STRAX', 'KRW-AQT', 'KRW-GLM', 'KRW-SSX', 'KRW-META',
+         'KRW-FCT2', 'KRW-CBK', 'KRW-SAND', 'KRW-HUM', 'KRW-DOGE', 'KRW-STRK', 'KRW-PUNDIX', 'KRW-FLOW', 'KRW-DAWN', 'KRW-AXS',
+          'KRW-STX', 'KRW-XEC', 'KRW-SOL', 'KRW-MATIC', 'KRW-NU', 'KRW-AAVE', 'KRW-1INCH', 'KRW-ALGO', 'KRW-NEAR', 'KRW-WEMIX'}
 
 def post_message(token, channel, text):
     """슬랙 메시지 전송"""
@@ -26,11 +38,11 @@ def get_start_time(ticker):
     start_time = df.index[0]
     return start_time
 
-def get_ma5(ticker):
-    """5일 이동 평균선 조회"""
-    df = pyupbit.get_ohlcv(ticker, interval="day", count=5)
-    ma5 = df['close'].rolling(5).mean().iloc[-1]
-    return ma5
+def get_ma20(ticker):
+    """20일 이동 평균선 조회"""
+    df = pyupbit.get_ohlcv(ticker, interval="day", count=20)
+    ma20 = df['close'].rolling(20).mean().iloc[-1]
+    return ma20
 
 def get_balance(ticker):
     """잔고 조회"""
@@ -54,27 +66,30 @@ print("autotrade start")
 post_message(myToken,"#maslack", "autotrade start")
 
 while True:
-    try:
-        now = datetime.datetime.now()
-        start_time = get_start_time("KRW-BTC")
-        end_time = start_time + datetime.timedelta(days=1)
+    for i in coinlist:
+        try:
+            now = datetime.datetime.now()
+            start_time = get_start_time(i)
+            end_time = start_time + datetime.timedelta(days=1)
 
-        if start_time < now < end_time - datetime.timedelta(seconds=10):
-            target_price = get_target_price("KRW-BTC", 0.1)
-            ma5 = get_ma5("KRW-BTC")
-            current_price = get_current_price("KRW-BTC")
-            if target_price < current_price and ma5 < current_price:
-                krw = get_balance("KRW")
-                if krw > 5000:
-                    buy_result = upbit.buy_market_order("KRW-BTC", krw*0.9995)
-                    post_message(myToken,"#maslack", "BTC buy : " +str(buy_result))
-        else:
-            btc = get_balance("BTC")
-            if btc > 0.00008:
-                sell_result = upbit.sell_market_order("KRW-BTC", btc*0.9995)
-                post_message(myToken,"#maslack", "BTC buy : " +str(sell_result))
-        time.sleep(1)
-    except Exception as e:
-        print(e)
-        post_message(myToken,"#maslack", e)
-        time.sleep(1)
+            if  start_time < now < end_time - datetime.timedelta(seconds=10):
+                target_price = get_target_price(i, 0.6)
+                ma20 = get_ma20(i)
+                current_price = get_current_price(i)
+                if target_price < current_price and ma20 < current_price:
+                    
+                    krw = get_balance("KRW")
+                    if krw > 5000:
+                        buy_result = upbit.buy_market_order(i, krw*0.9995)
+                        post_message(myToken,"#maslack", " 매수 : " +str(buy_result))
+            else:
+                btc = get_balance("BTC")
+                if btc > 0.00008:
+                    pass
+                        #sell_result = upbit.sell_market_order(i, btc*0.9995)
+                        #post_message(myToken,"#maslack", " buy : " +str(sell_result))
+            time.sleep(1)
+        except Exception as e:
+            print(e)
+            post_message(myToken,"#maslack", e)
+            time.sleep(1)
